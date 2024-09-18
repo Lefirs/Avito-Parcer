@@ -89,7 +89,11 @@ print('links: ', table_links)
 for i in elm_prop:
     try:
         print('Count: ', count)
-        price = find_price(browser=browser, url_search=f'{table_links[count]}?guests=2&calendar=true') # Поиск цены объекта
+        try:
+            price = find_price(browser=browser, url_search=f'{table_links[count]}?guests=2&calendar=true') # Поиск цены объекта
+        except IndexError:
+            print('File main_map.py | Stroke 93 | Error!')
+            continue
         if price == False:
             print(price)
             count = count + 1

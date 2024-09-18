@@ -19,7 +19,11 @@ def find_price(browser, url_search):
 
     dontbookingrent[0].click()
     dontbookingrent = browser.find_elements(By.CLASS_NAME, 'styles-module-hoverable-_XDVD') # Проверка на незабронированные ячейки
-    dontbookingrent[0].click()
+    try:
+        dontbookingrent[0].click()
+    except IndexError:
+        print('File func_find_price.py | Stroke 23 | Error!')
+        return False
 
     time.sleep(1)
 
