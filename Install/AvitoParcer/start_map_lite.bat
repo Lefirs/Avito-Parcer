@@ -1,0 +1,2 @@
+python main_map_lite.py
+pause

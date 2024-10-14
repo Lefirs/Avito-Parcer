@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.options import Options
 import os
 from math import ceil
 from func_export_to_xlsx import export_to_xlsx
-from func_find_price import find_price
 
 # Инициализация ссылки
 url_search = input('Введите URL: ')
@@ -32,7 +31,7 @@ browser.get(url_search)
 
 print('Закройте окно "Заселения и выезда", если оно присутствует.')
 
-#os.system('pause')
+os.system('pause')
 
 os.system('cls')
 
@@ -74,50 +73,59 @@ for i in elm_prop:
     print(i.text)
 print(elm_prop)
 
-table_txt = [] # Список отвечающий за названия объектов
-table_addr = [] # Список отвечающий за адреса объектов
-table_links = [] # Список отвечающий за ссылки на объекты
+count_e = 1
 for e in elm_prop:
+    print(f"Загрузка объектов: {count_e}/{len(elm_prop)}")
     name = e.find_element(By.CLASS_NAME, 'styles-link-cQMwi').get_attribute('title')
     link = e.find_element(By.CLASS_NAME, 'styles-link-cQMwi').get_attribute('href')
+    price = e.find_element(By.CLASS_NAME, 'styles-module-root-bLKnd').text.split(' ')
+    print(price)
+    price = f"{price[0]}{price[1]}"
     try:
         addr = e.find_element(By.CLASS_NAME, 'styles-module-noAccent-LowZ8').text
     except selenium.common.exceptions.NoSuchElementException:
         addr = e.find_element(By.CLASS_NAME, 'styles-module-noAccent-l9CMS').text
     print(f'Name: {name} | Link: {link} | Addr: {addr}')
-    table_txt.append(name)
-    table_links.append(link)
-    table_addr.append(addr)
+    rent_object = {
+        'Name': name,
+        'Price': int(price),
+        'Address': addr,
+        'Link': link
+    }
+    objects.append(rent_object)
+    count_e = count_e + 1
 
-print('links: ', table_links)
+# for i in elm_prop:
+#     try:
+#         print('Count: ', count)
+#         try:
+#             price = find_price(browser=browser, url_search=f'{table_links[count]}?guests=2&calendar=true') # Поиск цены объекта
+#         except IndexError:
+#             print('File main_map.py | Stroke 93 | Error!')
+#             continue
+#         if price == False:
+#             print(price)
+#             count = count + 1
+#             continue
+#         print(price)
+#         # Составление архитектуры объекта
+#         rent_object = {
+#             'Name': table_txt[count],
+#             'Price': price,
+#             'Address': table_addr[count],
+#             'Link': table_links[count]
+#         }
+#         # Добавление объекта в список
+#         objects.append(rent_object)
+#         print(rent_object)
+#         print('======================================================================================================================================================================================================')
+#         count = count + 1
+#     except selenium.common.exceptions.StaleElementReferenceException:
+#         continue
 
-for i in elm_prop:
-    try:
-        print('Count: ', count)
-        try:
-            price = find_price(browser=browser, url_search=f'{table_links[count]}?guests=2&calendar=true') # Поиск цены объекта
-        except IndexError:
-            print('File main_map.py | Stroke 93 | Error!')
-            continue
-        if price == False:
-            print(price)
-            count = count + 1
-            continue
-        print(price)
-        # Составление архитектуры объекта
-        rent_object = {
-            'Name': table_txt[count],
-            'Price': price,
-            'Address': table_addr[count],
-            'Link': table_links[count]
-        }
-        # Добавление объекта в список
-        objects.append(rent_object)
-        print(rent_object)
-        print('======================================================================================================================================================================================================')
-        count = count + 1
-    except selenium.common.exceptions.StaleElementReferenceException:
-        continue
+
+for i in objects:
+    print(i)
 
 # Создание xlsx таблицы
 
